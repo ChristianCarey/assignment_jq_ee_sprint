@@ -2,51 +2,46 @@ var formValidations = {
 
   init: function() {
 
-    $('input[type=text]').on("input", function(e){
+    $textField.$obj.on("input", function(e){
       var chars = $(e.target).val().length;
-      formValidations.fieldCounter("#text-field-counter", 32, chars);
+      formValidations.fieldCounter($textField, chars);
     });
-    $('textarea').on("input", function(e){
+    $textarea.$obj.on("input", function(e){
       var chars = $(e.target).val().length;
-      formValidations.fieldCounter("#textarea-counter", 140, chars);
+      formValidations.fieldCounter($textarea, chars);
     });
-    $('#password').on("input", function(e){
+    $passwordField.$obj.on("input", function(e){
       var chars = $(e.target).val().length;
-      formValidations.fieldCounter("#password-counter", 16, chars);
+      formValidations.fieldCounter($passwordField, chars);
     });
-    $('#password-confirmation').on("input", function(e){
-      var chars = $(e.target).val().length;
-      formValidations.fieldCounter("#password-confirmation-counter", 16, chars);
-    });
-    $('#password-confirmation').on("input", this.checkPasswordMatch);
+    $passwordConfirmation.$obj.on("input", this.checkPasswordMatch);
     $('form').submit(this.trySubmit);
   },
 
-  fieldCounter: function(counterId, maxChars, chars) {
-    var $counter = $(counterId);
+  fieldCounter: function(field, chars) {
+    $tip = field.$obj.siblings(".tip");
     if (chars > 0) {
-      $counter.show();
-      $counter.text(maxChars - chars + " characters remaining.");
+      $tip.show();
+      $tip.text(field.constraints.length.max - chars + " characters remaining.");
     } else {
-      $counter.hide();
+      $tip.hide();
     }
   },
 
   checkPasswordMatch: function() {
-    if ($passwordField.val() !== $passwordConfirmation.val() && $passwordConfirmation.val().length > 0) {
-      $passwordMatch.show();
-      $passwordMatch.text("Password confirmation doesn't match password.");
+    if ($passwordField.$obj.val() !== $passwordConfirmation.$obj.val() && $passwordConfirmation.$obj.val().length > 0) {
+      $passwordConfirmation.errorP.show();
+      $passwordConfirmation.errorP.text("Password confirmation doesn't match password.");
     } else {
-      $passwordMatch.hide();
+      $passwordConfirmation.errorP.hide();
     }
   },
 
   trySubmit: function(e){
-    var validationObject = formValidations.validateInput()
-    for (validation in validationObject) {
+    var validationObject = formValidations.validateInput();
+    for(validation in validationObject) {
       if (!validationObject[validation]) {
         e.preventDefault();
-        formValidations.renderErrors(validationObject);
         break;
       }
     }
@@ -54,74 +49,93 @@ var formValidations = {
 
   validateInput: function(){
     // validate each length
-    console.log('validate input')
     var validatedFields = {
-      textField: this.validateLength($textField, 4, 32),
+      textField: $textField.validateLength(),
 
-      textarea: this.validateLength($textarea, 4, 140),
+      textarea: $textarea.validateLength(),
 
-      password: this.validateLength($passwordField, 6, 16),
+      passwordField: $passwordField.validateLength(),
 
       passwordConfirmation: this.validatePasswordMatch()
     }
     return validatedFields;
   },
 
-  validateLength: function(field, min, max) {
-    return !(field.val().length < min || field.val().length > max);
-  },
-
   validatePasswordMatch: function(){
-    return ($passwordField.val() === $passwordConfirmation.val());
-  },
-
-  renderErrors: function(validationObject){
-    console.log('render errors');
-    for (field in validationObject) {
-      // began constucting
+    var valid  = ($passwordField.$obj.val() === $passwordConfirmation.$obj.val());
+    if (!valid) {
+      $passwordConfirmation.$obj.css("border", "1px solid red");
+      $passwordConfirmation.errorP.text($passwordConfirmation.errorMessage);
     }
+    return valid;
   }
 }
 
+function FormField($obj, errorMessage, constraints) {
+  this.$obj = $obj,
+  this.errorMessage = errorMessage,
+  this.constraints = constraints,
+  this.errorP = this.$obj.siblings('.error'),
+  this.validateLength = function(){
+    var valid = !(this.$obj.val().length < this.constraints.length.min || this.$obj.val().length > this.constraints.length.max);
+    if (!valid) {
+      this.$obj.css("border", "1px solid red");
+      this.errorP.text(this.errorMessage); 
+    }
+    return valid;
+  };
+}
+  
 var $textField,
-  $textarea,
-  $passwordField,
-  $passwordConfirmation,
-  $passwordMatch;
-
+    $textarea,
+    $passwordField,
+    $passwordConfirmation;
 
 
 $(document).ready(function(){
   $textField = $('input[type=text]');
   $textarea = $('textarea');
   $passwordField = $('#password');
-  $passwordConfirmation = $('#password-confirmation');
-  $passwordMatch = $('#password-match');
-  formValidations.init();
+
+
+  $textField = new FormField(
+    $('input[type=text]'),
+    'Text field must be between 4-32 characters',
+    { 
+      length: {
+        min: 4,
+        max: 32
+      }
+    }
+  );
+
+  $textarea = new FormField(
+    $('textarea'),
+    'Textarea must be between 4-140 characters',
+    { 
+      length: {
+        min: 4,
+        max: 140
+      }
+    }
+  );
+
+  $passwordField = new FormField(
+    $('#password'), 
+    'Password must be between 6-16 characters',
+    { 
+      length: {
+        min: 4,
+        max: 16
+      }
+    }
+  );
+
+  $passwordConfirmation = new FormField(
+    $('#password-confirmation'), 
+    'Confirmation must match password'
+  );
+  formValidations.init()
 });
 
 
-// Constructor!
-  // function FormField($obj, $tip, $errorField, errorMessage) {
-  //   this.$obj = $obj
-  //   this.tip = tip,
-  //   this.errorField = errorField,
-  //   this.errorMessage = errorMessage
-  // }
-
-
-  // $textField = new FormField(
-  //   $('input[type=text]'), $("#text-field-counter"), $("#text-field-error"), 'Text field must be between 4-32 characters')
-  // );
-
-  // $textareaField = new FormField(
-  //   $('textarea'), $("#textarea-counter"), $("#textarea-field-error"), 'Textarea must be between 4-140 characters')
-  // );
-
-  // $textareaField = new FormField(
-  //   $('#password'), $("#password-counter"), $("#password-error"), 'Password must be between 6-16 characters')
-  // );
-
-  // $textareaField = new FormField(
-  //   $('#password-confirmation'), $("#password-confirmation-counter"), $("#password-match"), 'Confirmation must match password')
-  // );

@@ -8,19 +8,26 @@
   </head>
   <body>
     <form>
-      <input type="text">
-      <p id='text-field-counter'></p>
-      <br>
-      <textarea></textarea>
-      <p id='textarea-counter'></p>
-      <br>
-      <input type="password" id="password">
-      <p id='password-counter'></p>
-      <br>
-      <input type="password" id="password-confirmation">
-      <p id='password-confirmation-counter'></p>
-      <p id="password-match"></p>
-      <br>
+      <div class="form-group">
+        <input type="text">
+        <p class='tip'></p>
+        <p class="error" style="color: red"></p>
+      </div>
+      <div class="form-group">
+        <textarea></textarea>
+        <p class='tip'></p>
+        <p class="error" style="color: red"></p>
+      </div>
+      <div class="form-group">
+        <input type="password" id="password">
+        <p class='tip'></p>
+        <p class="error" style="color: red"></p>
+      </div>
+      <div class="form-group">
+        <input type="password" id="password-confirmation">
+        <p class='tip'></p>
+        <p class="error" style="color: red"></p>
+      </div>  
       <input type="submit">
     </form>
   </body>
