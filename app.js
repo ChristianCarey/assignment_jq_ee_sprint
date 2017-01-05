@@ -25,6 +25,7 @@ var formValidations = {
   fieldCounter: function(counterId, maxChars, chars) {
     var $counter = $(counterId);
     if (chars > 0) {
+      $counter.show();
       $counter.text(maxChars - chars + " characters remaining.");
     } else {
       $counter.hide();
@@ -41,46 +42,86 @@ var formValidations = {
   },
 
   trySubmit: function(e){
-    console.log(formValidations);
-    if (!formValidations.validateInput) {
-      e.preventDefault;
-      formValidations.renderErrors();
+    var validationObject = formValidations.validateInput()
+    for (validation in validationObject) {
+      if (!validationObject[validation]) {
+        e.preventDefault();
+        formValidations.renderErrors(validationObject);
+        break;
+      }
     }
   },
 
   validateInput: function(){
     // validate each length
-    var valid = true;
-    this.validateLength($textField, 4, 32);
-    this.validateLength($textarea, 4, 140);
-    this.validateLength($passwordField, 6, 16);
-    this.validatePasswordMatch();
-    return valid;
-    // prevent default and render errors if wrong
+    console.log('validate input')
+    var validatedFields = {
+      textField: this.validateLength($textField, 4, 32),
+
+      textarea: this.validateLength($textarea, 4, 140),
+
+      password: this.validateLength($passwordField, 6, 16),
+
+      passwordConfirmation: this.validatePasswordMatch()
+    }
+    return validatedFields;
   },
 
   validateLength: function(field, min, max) {
-    if (field.val().length < min || field.val().length > max) {
-      valid = false;
-    }
+    return !(field.val().length < min || field.val().length > max);
   },
 
   validatePasswordMatch: function(){
-    if ($passwordField.val() !== $passwordConfirmation.val()) {
-      valid = false;
-    }
+    return ($passwordField.val() === $passwordConfirmation.val());
   },
 
-  renderErrors: function(){
-    $textarea.hide();
+  renderErrors: function(validationObject){
+    console.log('render errors');
+    for (field in validationObject) {
+      // began constucting
+    }
   }
 }
 
+var $textField,
+  $textarea,
+  $passwordField,
+  $passwordConfirmation,
+  $passwordMatch;
+
+
+
 $(document).ready(function(){
-  var $textField = $('input[type=text]');
-  var $textarea = $('textarea');
-  var $passwordField = $('#password');
-  var $passwordConfirmation = $('#password-confirmation');
-  var $passwordMatch = $('#password-match');
-  formValidations.init()
+  $textField = $('input[type=text]');
+  $textarea = $('textarea');
+  $passwordField = $('#password');
+  $passwordConfirmation = $('#password-confirmation');
+  $passwordMatch = $('#password-match');
+  formValidations.init();
 });
+
+
+// Constructor!
+  // function FormField($obj, $tip, $errorField, errorMessage) {
+  //   this.$obj = $obj
+  //   this.tip = tip,
+  //   this.errorField = errorField,
+  //   this.errorMessage = errorMessage
+  // }
+
+
+  // $textField = new FormField(
+  //   $('input[type=text]'), $("#text-field-counter"), $("#text-field-error"), 'Text field must be between 4-32 characters')
+  // );
+
+  // $textareaField = new FormField(
+  //   $('textarea'), $("#textarea-counter"), $("#textarea-field-error"), 'Textarea must be between 4-140 characters')
+  // );
+
+  // $textareaField = new FormField(
+  //   $('#password'), $("#password-counter"), $("#password-error"), 'Password must be between 6-16 characters')
+  // );
+
+  // $textareaField = new FormField(
+  //   $('#password-confirmation'), $("#password-confirmation-counter"), $("#password-match"), 'Confirmation must match password')
+  // );
