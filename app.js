@@ -1,16 +1,21 @@
 var formValidations = {
 
   init: function() {
-    $('input[type=text]').on("input", this.textFieldCounter('this'));
+    $('input[type=text]').on("input", $.proxy(this.fieldCounter, null, '#text-field-counter', 32));
+    $('textarea').on("input", this.fieldCounter('#textarea-counter', 140));
+
   },
 
-  textFieldCounter: function(e){
+  fieldCounter: function(_, counterId, maxChars, e) {
+    // var counterId = e.data.counterId;
+    // var maxChars = e.data.maxChars;
+    console.log(arguments)
     var chars = $(e.target).val().length;
-    var $counter = $('#field-counter')
+    var $counter = $(counterId);
     if (chars > 0) {
-      $counter.text(32 - chars + " characters remaining.");
+      $counter.text(maxChars - chars + " characters remaining.");
     } else {
-      $counter.hide()
+      $counter.hide();
     }
   }
 
