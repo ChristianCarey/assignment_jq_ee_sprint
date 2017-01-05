@@ -1,14 +1,21 @@
 var formValidations = {
+
+  init: function() {
+    $('input[type=text]').on("input", this.textFieldCounter('this'));
+  },
+
   textFieldCounter: function(e){
-    
     var chars = $(e.target).val().length;
+    var $counter = $('#field-counter')
     if (chars > 0) {
-      var $counter = $('<p>').text(32 - chars + " characters remaining.");
-      $(e.target).parent().append($counter);
+      $counter.text(32 - chars + " characters remaining.");
+    } else {
+      $counter.hide()
     }
   }
+
 }
 
 $(document).ready(function(){
-  $('input[type=text]').on("input", formValidations.textFieldCounter);
+  formValidations.init()
 });
