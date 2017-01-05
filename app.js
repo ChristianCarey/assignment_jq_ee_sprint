@@ -15,7 +15,7 @@ var formValidations = {
       formValidations.fieldCounter($passwordField, chars);
     });
     $passwordConfirmation.$obj.on("input", this.checkPasswordMatch);
-    $('form').submit(this.trySubmit);
+    $('#validations').submit(this.trySubmit);
   },
 
   fieldCounter: function(field, chars) {

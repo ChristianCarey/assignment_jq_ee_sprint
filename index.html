@@ -5,9 +5,11 @@
     <title>title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="app.js"></script>
+    <script src="dropdown.js"></script>
+    <link rel="stylesheet" href="styles.css" type='text/css'>
   </head>
   <body>
-    <form>
+    <form id='validations'>
       <div class="form-group">
         <input type="text">
         <p class='tip'></p>
@@ -28,6 +30,18 @@
         <p class='tip'></p>
         <p class="error" style="color: red"></p>
       </div>  
+      <input type="submit">
+    </form>
+  
+    <form action="index.html" id='dropdown-form'>
+      <div id="display">Choose a language&darr;</div>
+      <input type="hidden" id='selected-language'>
+      <ul id="dropdown">
+        <li>Ruby</li>
+        <li>Python</li>
+        <li>JavaScript</li>
+        <li>BrainFuck</li>
+      </ul>
       <input type="submit">
     </form>
   </body>
