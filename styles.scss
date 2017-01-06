@@ -38,9 +38,11 @@ body {
 
 .img-container {
   display: inline-block;
-  &:hover{
-    .tagging-cursor {
-      display: block;
-    }
-  }
+}
+
+.showing {
+  display: block;
+}
+.img:hover ~ .tagging-cursor{
+  display: block;
 }

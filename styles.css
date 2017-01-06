@@ -32,7 +32,11 @@ body {
 
 .img-container {
   display: inline-block; }
-  .img-container:hover .tagging-cursor {
-    display: block; }
+
+.showing {
+  display: block; }
+
+.img:hover ~ .tagging-cursor {
+  display: block; }
 
 /*# sourceMappingURL=styles.css.map */
